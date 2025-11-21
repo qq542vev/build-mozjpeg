@@ -1,0 +1,71 @@
+### File: Dockerfile.v4
+##
+## mozjpeg v4を組み立てる。
+##
+## Usage:
+##
+## ------ Text ------
+## docker buildx build -f Dockerfile.v4
+## ------------------
+##
+## Build arg:
+##
+##   BUILD_BASE - ビルド時に使用するイメージ名。
+##   MOZJPEG_TAG - mozjpegのGitタグまたはコミットID。
+##   CMAKE_OPTS - cmakeコマンドへのオプション。
+##   MAKE_OPTS - makeコマンドへのオプション。
+##
+## Metadata:
+##
+##   id - c1f1505c-916b-4f51-861f-3c79517a03dd
+##   author - <qq542vev at https://purl.org/meta/me/>
+##   version - 1.0.0
+##   created - 2025-11-18
+##   modified - 2025-11-18
+##   copyright - Copyright (C) 2025-2025 qq542vev. All rights reserved.
+##   license - <GPL-3.0-only at https://www.gnu.org/licenses/gpl-3.0.txt>
+##
+## See Also:
+##
+##   * <Project homepage at https://github.com/qq542vev/build-mozjpeg>
+##   * <Bag report at https://github.com/qq542vev/build-mozjpeg/issues>
+
+ARG BUILD_BASE="ubuntu:18.04"
+FROM ${BUILD_BASE} AS build
+
+ENV LANG=C LC_ALL=C TZ=UTC0 DEBIAN_FRONTEND=noninteractive
+
+RUN \
+	apt-get update && \
+	apt-get install -y --no-install-recommends \
+		ca-certificates ubuntu-advantage-tools
+
+RUN --mount=type=secret,id=attach \
+	ATTACH_FILE=/run/secrets/attach && \
+	if [ -s "${ATTACH_FILE}" ]; then \
+		ua attach --attach-config "${ATTACH_FILE}" && \
+		trap 'ua detach --assume-yes || exit "${?}"' EXIT; \
+	fi && \
+	apt-get update && \
+	apt-get upgrade -y && \
+	apt-get install -y --no-install-recommends \
+		cmake gcc git libpng-dev make nasm zlib1g-dev && \
+	apt-get clean && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /work/build
+COPY .git ..
+
+ARG MOZJPEG_TAG=v4.1.5
+RUN git archive --format=tar "${MOZJPEG_TAG}" | tar -xvC ..
+
+ARG CMAKE_OPTS=
+RUN cmake -G 'Unix Makefiles' -D WITH_ARITH_DEC=ON -D WITH_ARITH_ENC=ON -D WITH_SIMD=OFF ${CMAKE_OPTS} .. 2>&1 | tee cmake.log
+
+ARG MAKE_OPTS=
+RUN make -j "$(nproc)" ${MAKE_OPTS} | tee make.log
+RUN make -j "$(nproc)" ${MAKE_OPTS} tarball
+RUN make -j "$(nproc)" ${MAKE_OPTS} deb
+
+FROM scratch AS final
+COPY --from=build /work/build/mozjpeg*.tar.bz2 /work/build/mozjpeg*.deb /
+COPY --from=build /work/build/cmake.log /work/build/make.log /
