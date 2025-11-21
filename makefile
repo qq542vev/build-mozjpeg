@@ -43,19 +43,19 @@ FAIL = { \
 BUILD_CMD = \
 	trap ':' INT; \
 	{ mkdir -p -- '$(@)' && $(DOCKER); } || $(FAIL)
-SMID = [ '$(@)' != '$(@:%-simd=%)' ]
+SMID = [ '$(@)' != '$(@:-simd=)' ]
 MOZJPEG_V1 = $(MOZJPEG_V2)
 MOZJPEG_V2 = \
 	docker_opts='-f Dockerfile.v2'; \
-	$(SMID) && docker_opts="${docker_opts} --build-arg CONFIGURE_OPTS='-with-simd'"; \
+	$(SMID) && docker_opts="$${docker_opts} --build-arg CONFIGURE_OPTS='-with-simd'"; \
 	$(BUILD_CMD)
 MOZJPEG_V3 = \
 	docker_opts='-f Dockerfile.v3'; \
-	$(SMID) && docker_opts="${docker_opts} --build-arg CONFIGURE_OPTS='-with-simd'"; \
+	$(SMID) && docker_opts="$${docker_opts} --build-arg CONFIGURE_OPTS='-with-simd'"; \
 	$(BUILD_CMD)
 MOZJPEG_V4 = \
 	docker_opts='-f Dockerfile.v4'; \
-	$(SMID) && docker_opts="${docker_opts} --build-arg CMAKE_OPTS='-D WITH_SIMD=ON -D REQUIRE_SIMD=ON'"; \
+	$(SMID) && docker_opts="$${docker_opts} --build-arg CMAKE_OPTS='-D WITH_SIMD=ON -D REQUIRE_SIMD=ON'"; \
 	$(BUILD_CMD)
 MOZJPEG_CURRENT = $(MOZJPEG_V4)
 SIMD_RENAME = if $(SMID); then find '$(@)' -name '*mozjpeg*' -type f -exec sh -c 'n=mozjpeg; for p in "$${@}"; do d="$${p%/*}"; f=$${p\#\#*/}; mv -- "$${p}" "$${d}/$${f%%$${n}*}$${n}simd$${f\#*$${n}}"; done' sh '{}' +; fi
@@ -82,7 +82,7 @@ $(ARCHS:%=$(BUILD)/v1.%):
 	$(SIMD_RENAME)
 
 $(ARCHS:%=$(BUILD)/v2.%):
-	$(SET); $(MOZJPEG_V2):
+	$(SET); $(MOZJPEG_V2)
 	$(SIMD_RENAME)
 
 $(ARCHS:%=$(BUILD)/v3.%):
