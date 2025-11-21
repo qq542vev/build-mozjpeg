@@ -16,13 +16,17 @@
 ##   CONFIGURE_OPTS - configureコマンドへのオプション。
 ##   MAKE_OPTS - makeコマンドへのオプション。
 ##
+## Secret id:
+##
+##   attach - uaコマンド用のアタッチ設定ファイル。
+##
 ## Metadata:
 ##
 ##   id - 0ff9d5a0-0512-41ad-a2c5-61b3e4d125c4
 ##   author - <qq542vev at https://purl.org/meta/me/>
 ##   version - 1.0.0
 ##   created - 2025-11-18
-##   modified - 2025-11-18
+##   modified - 2025-11-21
 ##   copyright - Copyright (C) 2025-2025 qq542vev. All rights reserved.
 ##   license - <GPL-3.0-only at https://www.gnu.org/licenses/gpl-3.0.txt>
 ##
@@ -33,7 +37,7 @@
 
 FROM ubuntu:18.04 AS build
 
-ENV LANG=C LC_ALL=C TZ=UTC0 DEBIAN_FRONTEND=noninteractive
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 TZ=UTC0 DEBIAN_FRONTEND=noninteractive
 
 RUN \
 	apt-get update && \
@@ -44,10 +48,10 @@ RUN --mount=type=secret,id=attach \
 	ATTACH_FILE=/run/secrets/attach && \
 	if [ -s "${ATTACH_FILE}" ]; then \
 		ua attach --attach-config "${ATTACH_FILE}" && \
-		trap 'ua detach --assume-yes || exit "${?}"' EXIT; \
+		trap 'ua detach --assume-yes || exit "${?}"' EXIT && \
+		apt-get update && \
+		apt-get upgrade -y; \
 	fi && \
-	apt-get update && \
-	apt-get upgrade -y && \
 	apt-get install -y --no-install-recommends \
 		autoconf automake git libpng-dev libtool make nasm pkg-config sudo && \
 	apt-get clean && rm -rf /var/lib/apt/lists/*

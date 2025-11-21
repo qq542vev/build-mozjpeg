@@ -15,13 +15,17 @@
 ##   CMAKE_OPTS - cmakeコマンドへのオプション。
 ##   MAKE_OPTS - makeコマンドへのオプション。
 ##
+## Secret id:
+##
+##   attach - uaコマンド用のアタッチ設定ファイル。
+##
 ## Metadata:
 ##
 ##   id - c1f1505c-916b-4f51-861f-3c79517a03dd
 ##   author - <qq542vev at https://purl.org/meta/me/>
 ##   version - 1.0.0
 ##   created - 2025-11-18
-##   modified - 2025-11-18
+##   modified - 2025-11-21
 ##   copyright - Copyright (C) 2025-2025 qq542vev. All rights reserved.
 ##   license - <GPL-3.0-only at https://www.gnu.org/licenses/gpl-3.0.txt>
 ##
@@ -33,7 +37,7 @@
 ARG BUILD_BASE="ubuntu:18.04"
 FROM ${BUILD_BASE} AS build
 
-ENV LANG=C LC_ALL=C TZ=UTC0 DEBIAN_FRONTEND=noninteractive
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 TZ=UTC0 DEBIAN_FRONTEND=noninteractive
 
 RUN \
 	apt-get update && \
@@ -44,10 +48,10 @@ RUN --mount=type=secret,id=attach \
 	ATTACH_FILE=/run/secrets/attach && \
 	if [ -s "${ATTACH_FILE}" ]; then \
 		ua attach --attach-config "${ATTACH_FILE}" && \
-		trap 'ua detach --assume-yes || exit "${?}"' EXIT; \
+		trap 'ua detach --assume-yes || exit "${?}"' EXIT && \
+		apt-get update && \
+		apt-get upgrade -y; \
 	fi && \
-	apt-get update && \
-	apt-get upgrade -y && \
 	apt-get install -y --no-install-recommends \
 		cmake gcc git libpng-dev make nasm zlib1g-dev && \
 	apt-get clean && rm -rf /var/lib/apt/lists/*
