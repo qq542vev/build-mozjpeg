@@ -1,0 +1,6 @@
+# Ubuntu ProのTokenを入力してください。
+# https://ubuntu.com/pro/dashboard
+token: 
+enable-services:
+  - esm-apps
+  - esm-infra
