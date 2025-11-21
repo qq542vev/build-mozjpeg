@@ -39,6 +39,7 @@ ARG BUILD_BASE="ubuntu:18.04"
 FROM ${BUILD_BASE} AS build
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 TZ=UTC0 DEBIAN_FRONTEND=noninteractive
+SHELL ["/bin/bash", "-euo", "posix", "-o", "pipefail", "-c"]
 
 RUN \
 	apt-get update && \
@@ -51,7 +52,7 @@ RUN --mount=type=secret,id=attach \
 		ua attach --attach-config "${ATTACH_FILE}" && \
 		trap 'ua detach --assume-yes || exit "${?}"' EXIT && \
 		apt-get update && \
-		apt-get upgrade -y; \
+		apt-get upgrade -y --no-install-recommends; \
 	fi && \
 	apt-get install -y --no-install-recommends \
 		autoconf automake git libpng-dev libtool make nasm pkg-config && \
@@ -70,7 +71,7 @@ ARG CONFIGURE_OPTS=
 RUN sh ../configure --without-simd ${CONFIGURE_OPTS} 2>&1 | tee configure.log
 
 ARG MAKE_OPTS=
-RUN eval make -j "$(nproc)" ${MAKE_OPTS} | tee make.log
+RUN make -j "$(nproc)" ${MAKE_OPTS} | tee make.log
 RUN mkdir stage && make -j "$(nproc)" ${MAKE_OPTS} DESTDIR="${PWD}/stage" install && tar -czvf "mozjpeg-${MOZJPEG_TAG}-Linux-$(uname -m).tar.gz" -C stage .
 RUN make -j "$(nproc)" ${MAKE_OPTS} deb || :
 

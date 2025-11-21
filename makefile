@@ -49,11 +49,11 @@ SMID = [ '$(@)' != '$(@:-simd=)' ]
 MOZJPEG_V1 = $(MOZJPEG_V2)
 MOZJPEG_V2 = \
 	docker_opts='-f Dockerfile.v2'; \
-	$(SMID) && docker_opts="$${docker_opts} --build-arg CONFIGURE_OPTS='-with-simd'"; \
+	$(SMID) && docker_opts="$${docker_opts} --build-arg CONFIGURE_OPTS='--with-simd'"; \
 	$(BUILD_CMD)
 MOZJPEG_V3 = \
 	docker_opts='-f Dockerfile.v3'; \
-	$(SMID) && docker_opts="$${docker_opts} --build-arg CONFIGURE_OPTS='-with-simd'"; \
+	$(SMID) && docker_opts="$${docker_opts} --build-arg CONFIGURE_OPTS='--with-simd'"; \
 	$(BUILD_CMD)
 MOZJPEG_V4 = \
 	docker_opts='-f Dockerfile.v4'; \

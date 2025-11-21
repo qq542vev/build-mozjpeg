@@ -38,6 +38,7 @@ ARG BUILD_BASE="ubuntu:18.04"
 FROM ${BUILD_BASE} AS build
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 TZ=UTC0 DEBIAN_FRONTEND=noninteractive
+SHELL ["/bin/bash", "-euo", "posix", "-o", "pipefail", "-c"]
 
 RUN \
 	apt-get update && \
@@ -50,7 +51,7 @@ RUN --mount=type=secret,id=attach \
 		ua attach --attach-config "${ATTACH_FILE}" && \
 		trap 'ua detach --assume-yes || exit "${?}"' EXIT && \
 		apt-get update && \
-		apt-get upgrade -y; \
+		apt-get upgrade -y --no-install-recommends; \
 	fi && \
 	apt-get install -y --no-install-recommends \
 		cmake gcc git libpng-dev make nasm zlib1g-dev && \
