@@ -34,6 +34,8 @@ VERSION = 1.0.0
 
 BUILD = build
 ARCHS = %/386 %/386-simd %/amd64 %/amd64-simd %/arm/v7 %/arm/v7-simd %/arm64/v8 %/arm64/v8-simd %/ppc64le %/s390x
+UPSTREAM = https://github.com/mozilla/mozjpeg.git
+
 DOCKER = eval docker buildx build --secret 'id=attach,src=attach.yaml' --build-arg MOZJPEG_TAG="$${tag}" --platform "linux/$${arch}" --progress plain -o - $${docker_opts-} $(DOCKER_OPTS) . | tar -xvC '$(@)'
 FAIL = { \
 	status="$${?}"; \
@@ -100,7 +102,7 @@ rebuild: clean
 	$(MAKE)
 
 update:
-	git fetch --force https://github.com/mozilla/mozjpeg.git master:master
+	git fetch --force '$(UPSTREAM)'  'master:master'
 
 # Message
 # =======
@@ -113,6 +115,7 @@ help:
 	echo
 	echo 'MACRO:'
 	echo '  DOCKER_OPTS dockerコマンドへの追加オプション。'
+	echo '  UPSTREAM    Gitのアップストリーム用のURL。'
 	echo
 	echo 'TARGET:'
 	echo '  all     全てのファイルを作成する。'
