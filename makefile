@@ -23,7 +23,7 @@
 # Sp Targets
 # ==========
 
-.PHONY: all clean rebuild help version
+.PHONY: all clean rebuild update help version
 
 .SILENT: help version
 
@@ -99,6 +99,9 @@ clean:
 rebuild: clean
 	$(MAKE)
 
+update:
+	git fetch --force https://github.com/mozilla/mozjpeg.git master:master
+
 # Message
 # =======
 
@@ -115,6 +118,7 @@ help:
 	echo '  all     全てのファイルを作成する。'
 	echo '  clean   作成したファイルを削除する。'
 	echo '  rebuild cleanの実行後にallを実行する。'
+	echo '  update  ローカルリポジトリを更新する。'
 	echo '  help    このヘルプを表示して終了する。'
 	echo '  version バージョン情報を表示して終了する。'
 
