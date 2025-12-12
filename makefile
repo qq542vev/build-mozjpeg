@@ -33,7 +33,8 @@
 VERSION = 1.0.0
 
 BUILD = build
-ARCHS = %/386 %/386-simd %/amd64 %/amd64-simd %/arm/v7 %/arm/v7-simd %/arm64/v8 %/arm64/v8-simd %/ppc64le %/s390x
+ARCHS = 386 386-simd amd64 amd64-simd arm/v7 arm/v7-simd arm64/v8 ppc64le s390x
+PARCHS != for arch in $(ARCHS); do echo "%/$${arch}"; done
 UPSTREAM = https://github.com/mozilla/mozjpeg.git
 
 DOCKER = eval docker buildx build --secret 'id=attach,src=attach.yaml' --build-arg MOZJPEG_TAG="$${tag}" --platform "linux/$${arch}" --progress plain -o - $${docker_opts-} $(DOCKER_OPTS) . | tar -xvC '$(@)'
@@ -72,26 +73,26 @@ SET = \
 all:
 	make $$(git tag | sed -En 's#^v[1-9][0-9]*(\.(0|[1-9][0-9]*)){0,2}$$#$(BUILD)/&/all#p')
 
-$(BUILD)/%/all: $(ARCHS:%=$(BUILD)/%)
-	:
+$(BUILD)/%/all:
+	for target in $(ARCHS:%=$(@D)/%); do make "$${target}" || exit "$${?}"; done
 
 $(ARCHS:%=$(BUILD)/%):
 	$(SET); $(MOZJPEG_CURRENT)
 	$(SIMD_RENAME)
 
-$(ARCHS:%=$(BUILD)/v1.%):
+$(PARCHS:%=$(BUILD)/v1.%):
 	$(SET); $(MOZJPEG_V1)
 	$(SIMD_RENAME)
 
-$(ARCHS:%=$(BUILD)/v2.%):
+$(PARCHS:%=$(BUILD)/v2.%):
 	$(SET); $(MOZJPEG_V2)
 	$(SIMD_RENAME)
 
-$(ARCHS:%=$(BUILD)/v3.%):
+$(PARCHS:%=$(BUILD)/v3.%):
 	$(SET); $(MOZJPEG_V3)
 	$(SIMD_RENAME)
 
-$(ARCHS:%=$(BUILD)/v4.%):
+$(PARCHS:%=$(BUILD)/v4.%):
 	$(SET); $(MOZJPEG_V4)
 	$(SIMD_RENAME)
 
