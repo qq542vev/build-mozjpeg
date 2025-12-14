@@ -10,7 +10,7 @@
 ##   author - <qq542vev at https://purl.org/meta/me/>
 ##   version - 1.0.0
 ##   created - 2025-11-15
-##   modified - 2025-11-15
+##   modified - 2025-12-15
 ##   copyright - Copyright (C) 2025-2025 qq542vev. All rights reserved.
 ##   license - <GPL-3.0-only at https://www.gnu.org/licenses/gpl-3.0.txt>
 ##   depends - docker, find, git, mv, sed
@@ -33,7 +33,7 @@
 VERSION = 1.0.0
 
 BUILD = build
-ARCHS = 386 386-simd amd64 amd64-simd arm/v7 arm/v7-simd arm64/v8 ppc64le s390x
+ARCHS = 386 386-simd amd64 amd64-simd arm/v7 arm/v7-simd arm64/v8 arm64/v8-simd  ppc64le s390x
 PARCHS != for arch in $(ARCHS); do echo "%/$${arch}"; done
 UPSTREAM = https://github.com/mozilla/mozjpeg.git
 
@@ -79,6 +79,9 @@ $(BUILD)/%/all:
 $(ARCHS:%=$(BUILD)/%):
 	$(SET); $(MOZJPEG_CURRENT)
 	$(SIMD_RENAME)
+
+$(BUILD)/v1.%/arm64/v8-simd $(BUILD)/v2.%/arm64/v8-simd:
+	:
 
 $(PARCHS:%=$(BUILD)/v1.%):
 	$(SET); $(MOZJPEG_V1)
