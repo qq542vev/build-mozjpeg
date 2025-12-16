@@ -108,6 +108,10 @@ rebuild: clean
 update:
 	git fetch --force '$(UPSTREAM)'  'master:master'
 
+publish:
+	. ./.env && find . -path './$(BUILD)/v4.1.*' -prune -type d -exec sh -euc 'for d in "$${@}"; do echo docker run --rm -e GITHUB_TOKEN="$${GITHUB_TOKEN}" -v '.:/app' ghcr.io/juancarlosjr97/release-it-containerized release-it --ci --no-npm --no-git --changelog "$${d##*/}"; exit; done' sh '{}' +
+
+
 # Message
 # =======
 
