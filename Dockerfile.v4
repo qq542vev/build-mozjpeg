@@ -23,9 +23,9 @@
 ##
 ##   id - c1f1505c-916b-4f51-861f-3c79517a03dd
 ##   author - <qq542vev at https://purl.org/meta/me/>
-##   version - 1.0.0
+##   version - 1.0.1
 ##   created - 2025-11-18
-##   modified - 2025-11-21
+##   modified - 2025-12-24
 ##   copyright - Copyright (C) 2025-2025 qq542vev. All rights reserved.
 ##   license - <GPL-3.0-only at https://www.gnu.org/licenses/gpl-3.0.txt>
 ##
@@ -67,9 +67,9 @@ ARG CMAKE_OPTS=
 RUN cmake -G 'Unix Makefiles' -D WITH_ARITH_DEC=ON -D WITH_ARITH_ENC=ON -D WITH_SIMD=OFF ${CMAKE_OPTS} .. 2>&1 | tee cmake.log
 
 ARG MAKE_OPTS=
-RUN make -j "$(nproc)" ${MAKE_OPTS} | tee make.log
-RUN make -j "$(nproc)" ${MAKE_OPTS} tarball
-RUN make -j "$(nproc)" ${MAKE_OPTS} deb
+RUN make ${MAKE_OPTS} | tee make.log
+RUN make ${MAKE_OPTS} tarball
+RUN make ${MAKE_OPTS} deb
 
 FROM scratch AS final
 COPY --from=build /work/build/mozjpeg*.tar.bz2 /work/build/mozjpeg*.deb /

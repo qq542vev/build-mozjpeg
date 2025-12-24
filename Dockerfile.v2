@@ -24,9 +24,9 @@
 ##
 ##   id - 0ff9d5a0-0512-41ad-a2c5-61b3e4d125c4
 ##   author - <qq542vev at https://purl.org/meta/me/>
-##   version - 1.0.0
+##   version - 1.0.1
 ##   created - 2025-11-18
-##   modified - 2025-11-21
+##   modified - 2025-12-24
 ##   copyright - Copyright (C) 2025-2025 qq542vev. All rights reserved.
 ##   license - <GPL-3.0-only at https://www.gnu.org/licenses/gpl-3.0.txt>
 ##
@@ -70,9 +70,9 @@ ARG CONFIGURE_OPTS=
 RUN sh ../configure --without-simd ${CONFIGURE_OPTS} 2>&1 | tee configure.log
 
 ARG MAKE_OPTS=
-RUN make -j "$(nproc)" ${MAKE_OPTS} 2>&1 | tee make.log
-RUN mkdir stage && make -j "$(nproc)" ${MAKE_OPTS} DESTDIR="${PWD}/stage" install && tar -czvf "libmozjpeg-${MOZJPEG_TAG}-Linux-$(uname -m).tar.gz" -C stage .
-RUN make -j "$(nproc)" ${MAKE_OPTS} deb || :
+RUN make ${MAKE_OPTS} 2>&1 | tee make.log
+RUN mkdir stage && make ${MAKE_OPTS} DESTDIR="${PWD}/stage" install && tar -czvf "libmozjpeg-${MOZJPEG_TAG}-Linux-$(uname -m).tar.gz" -C stage .
+RUN make ${MAKE_OPTS} deb || :
 
 FROM scratch AS final
 COPY --from=build /work/build/libmozjpeg*.tar.gz /work/build/libmozjpeg*.deb /
