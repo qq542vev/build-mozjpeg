@@ -8,9 +8,9 @@
 ##
 ##   id - 12d86b83-9061-4112-8010-eab2952c051d
 ##   author - <qq542vev at https://purl.org/meta/me/>
-##   version - 1.0.0
+##   version - 1.1.0
 ##   created - 2025-11-15
-##   modified - 2025-12-15
+##   modified - 2025-12-25
 ##   copyright - Copyright (C) 2025-2025 qq542vev. All rights reserved.
 ##   license - <GPL-3.0-only at https://www.gnu.org/licenses/gpl-3.0.txt>
 ##   depends - docker, find, git, mv, sed
@@ -23,7 +23,7 @@
 # Sp Targets
 # ==========
 
-.PHONY: all clean rebuild update help version
+.PHONY: all clean rebuild update publish unpublish help version
 
 .SILENT: help version
 
@@ -66,12 +66,14 @@ SET = \
 	set -- '$(@:$(BUILD)/%=%)'; \
 	tag="$${1%%/*}"; \
 	arch="$${1\#*/}"; arch="$${arch%-simd}"
+TAGS != git tag -l --sort=version:refname 'v[1-9]*'
+
 
 # Build
 # =====
 
 all:
-	make $$(git tag | sed -En 's#^v[1-9][0-9]*(\.(0|[1-9][0-9]*)){0,2}$$#$(BUILD)/&/all#p')
+	make $(TAGS:%=$(BUILD)/%/all)
 
 $(BUILD)/%/all:
 	for target in $(ARCHS:%=$(@D)/%); do make "$${target}" || exit "$${?}"; done
@@ -106,11 +108,21 @@ rebuild: clean
 	$(MAKE)
 
 update:
-	git fetch --force '$(UPSTREAM)'  'master:master'
+	git fetch --force '$(UPSTREAM)' 'master:master'
 
 publish:
-	. ./.env && find . -path './$(BUILD)/v4.1.*' -prune -type d -exec sh -euc 'for d in "$${@}"; do echo docker run --rm -e GITHUB_TOKEN="$${GITHUB_TOKEN}" -v '.:/app' ghcr.io/juancarlosjr97/release-it-containerized release-it --ci --no-npm --no-git --changelog "$${d##*/}"; exit; done' sh '{}' +
+	for tag in $(TAGS); do \
+		if [ -d "$(BUILD)/$${tag}" ]; then \
+			find "$(BUILD)/$${tag}" ! -name '*.log' -type f -exec glab release create "$${tag}" --name "$${tag}" --notes "see: <https://github.com/mozilla/mozjpeg/releases/tag/$${tag}>" --no-update --use-package-registry '{}' +; \
+		fi; \
+	done
 
+unpublish:
+	for tag in $(TAGS); do \
+		if glab release view "$${tag}" >/dev/null 2>&1; then \
+			glab release delete "$${tag}" -y; \
+		fi; \
+	done
 
 # Message
 # =======
@@ -123,15 +135,17 @@ help:
 	echo
 	echo 'MACRO:'
 	echo '  DOCKER_OPTS dockerコマンドへの追加オプション。'
-	echo '  UPSTREAM    Gitのアップストリーム用のURL。'
+	echo '  UPSTREAM    リモートリポジトリのアップストリーム用のURL。'
 	echo
 	echo 'TARGET:'
-	echo '  all     全てのファイルを作成する。'
-	echo '  clean   作成したファイルを削除する。'
-	echo '  rebuild cleanの実行後にallを実行する。'
-	echo '  update  ローカルリポジトリを更新する。'
-	echo '  help    このヘルプを表示して終了する。'
-	echo '  version バージョン情報を表示して終了する。'
+	echo '  all       全てのファイルを作成する。'
+	echo '  clean     作成したファイルを削除する。'
+	echo '  rebuild   cleanの実行後にallを実行する。'
+	echo '  update    ローカルリポジトリを更新する。'
+	echo '  publish   リリースページを作成する。'
+	echo '  unpublish リリースページを削除する。'
+	echo '  help      このヘルプを表示して終了する。'
+	echo '  version   バージョン情報を表示して終了する。'
 
 version:
 	echo '$(VERSION)'
