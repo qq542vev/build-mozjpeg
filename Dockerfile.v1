@@ -1,18 +1,19 @@
-### File: Dockerfile.v4
+### File: Dockerfile.v1
 ##
-## MozJPEG v4を組み立てる。
+## MozJPEG v1を組み立てる。
 ##
 ## Usage:
 ##
 ## ------ Text ------
-## docker buildx build -f Dockerfile.v4
+## docker buildx build -f Dockerfile.v2
 ## ------------------
 ##
 ## Build arg:
 ##
 ##   BUILD_BASE - ビルド時に使用するイメージ名。
 ##   REV - Gitリポジトリのリビジョン識別子。
-##   CMAKE_OPTS - cmakeコマンドへのオプション。
+##   AUTORECONF_OPTS - autoreconfコマンドへのオプション。
+##   CONFIGURE_OPTS - configureコマンドへのオプション。
 ##   MAKE_OPTS - makeコマンドへのオプション。
 ##
 ## Secret id:
@@ -21,7 +22,7 @@
 ##
 ## Metadata:
 ##
-##   id - c1f1505c-916b-4f51-861f-3c79517a03dd
+##   id - 0ff9d5a0-0512-41ad-a2c5-61b3e4d125c4
 ##   author - <qq542vev at https://purl.org/meta/me/>
 ##   version - 1.0.2
 ##   created - 2025-11-18
@@ -34,8 +35,7 @@
 ##   * <Project homepage at https://github.com/qq542vev/build-mozjpeg>
 ##   * <Bag report at https://github.com/qq542vev/build-mozjpeg/issues>
 
-ARG BUILD_BASE="ubuntu:18.04"
-FROM ${BUILD_BASE} AS build
+FROM ubuntu:18.04 AS build
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 TZ=UTC0 DEBIAN_FRONTEND=noninteractive
 SHELL ["/bin/bash", "-euo", "posix", "-o", "pipefail", "-c"]
@@ -54,23 +54,26 @@ RUN --mount=type=secret,id=attach \
 		apt-get upgrade -y --no-install-recommends; \
 	fi && \
 	apt-get install -y --no-install-recommends \
-		cmake gcc git libpng-dev make nasm zlib1g-dev && \
+		autoconf automake git libpng-dev libtool make nasm pkg-config sudo && \
 	apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /work/build
 COPY .git ..
 
-ARG REV=v4.1.5
+ARG REV=v2.1
 RUN git archive --format=tar "${REV}" | tar -xvC ..
 
-ARG CMAKE_OPTS=
-RUN cmake -G 'Unix Makefiles' -D WITH_ARITH_DEC=ON -D WITH_ARITH_ENC=ON -D WITH_SIMD=OFF ${CMAKE_OPTS} .. 2>&1 | tee cmake.log
+ARG AUTORECONF_OPTS=
+RUN autoreconf -fiv ${AUTORECONF_OPTS} ..
+
+ARG CONFIGURE_OPTS=
+RUN sh ../configure --without-simd ${CONFIGURE_OPTS} 2>&1 | tee configure.log
 
 ARG MAKE_OPTS=
-RUN make ${MAKE_OPTS} | tee make.log
-RUN make ${MAKE_OPTS} tarball
-RUN make ${MAKE_OPTS} deb
+RUN make ${MAKE_OPTS} 2>&1 | tee make.log
+RUN mkdir stage && make ${MAKE_OPTS} DESTDIR="${PWD}/stage" install && tar -czvf "libmozjpeg-${REV}-Linux-$(uname -m).tar.gz" -C stage .
+RUN make ${MAKE_OPTS} deb || :
 
 FROM scratch AS final
-COPY --from=build /work/build/mozjpeg*.tar.bz2 /work/build/mozjpeg*.deb /
-COPY --from=build /work/build/cmake.log /work/build/make.log /
+COPY --from=build /work/build/libmozjpeg*.tar.gz /work/build/libmozjpeg*.deb /
+COPY --from=build /work/build/configure.log /work/build/make.log /

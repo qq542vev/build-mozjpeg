@@ -1,15 +1,15 @@
-variable "MOZJPEG_TAG" {default = "v4.1.5"}
-variable "MOZJPEG_ARCH" {default = "386"}
+variable "REV" {default = "v4.1.5"}
+variable "ARCH" {default = "386"}
 variable "mver" {
-  default = try(regex("^v[1-4]", "${MOZJPEG_TAG}"), "v4")
+  default = try(regex("^v[1-4]", "${REV}"), "v4")
 }
 
 target "default" {
   context = "."
   dockerfile = "Dockerfile.${mver}"
-  platforms = ["linux/${MOZJPEG_ARCH}"]
+  platforms = ["linux/${ARCH}"]
   args = {
-    MOZJPEG_TAG = MOZJPEG_TAG
+    REV = REV
   }
   secrets = [
     "id=attach,src=attach.yaml"

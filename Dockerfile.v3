@@ -1,6 +1,6 @@
 ### File: Dockerfile.v3
 ##
-## mozjpeg v3を組み立てる。
+## MozJPEG v3を組み立てる。
 ##
 ## Usage:
 ##
@@ -11,7 +11,7 @@
 ## Build arg:
 ##
 ##   BUILD_BASE - ビルド時に使用するイメージ名。
-##   MOZJPEG_TAG - mozjpegのGitタグまたはコミットID。
+##   REV - Gitリポジトリのリビジョン識別子。
 ##   AUTORECONF_OPTS - autoreconfコマンドへのオプション。
 ##   CONFIGURE_OPTS - configureコマンドへのオプション。
 ##   MAKE_OPTS - makeコマンドへのオプション。
@@ -24,9 +24,9 @@
 ##
 ##   id - 7f3ae4b7-02fb-45fa-a85c-aef4429eb3aa
 ##   author - <qq542vev at https://purl.org/meta/me/>
-##   version - 1.0.1
+##   version - 1.0.2
 ##   created - 2025-11-18
-##   modified - 2025-12-24
+##   modified - 2026-01-03
 ##   copyright - Copyright (C) 2025-2025 qq542vev. All rights reserved.
 ##   license - <GPL-3.0-only at https://www.gnu.org/licenses/gpl-3.0.txt>
 ##
@@ -61,8 +61,8 @@ RUN --mount=type=secret,id=attach \
 WORKDIR /work/build
 COPY .git ..
 
-ARG MOZJPEG_TAG=v3.3.1
-RUN git archive --format=tar "${MOZJPEG_TAG}" | tar -xvC ..
+ARG REV=v3.3.1
+RUN git archive --format=tar "${REV}" | tar -xvC ..
 
 ARG AUTORECONF_OPTS=
 RUN autoreconf -fiv ${AUTORECONF_OPTS} ..
@@ -72,7 +72,7 @@ RUN sh ../configure --without-simd ${CONFIGURE_OPTS} 2>&1 | tee configure.log
 
 ARG MAKE_OPTS=
 RUN make ${MAKE_OPTS} | tee make.log
-RUN mkdir stage && make ${MAKE_OPTS} DESTDIR="${PWD}/stage" install && tar -czvf "mozjpeg-${MOZJPEG_TAG}-Linux-$(uname -m).tar.gz" -C stage .
+RUN mkdir stage && make ${MAKE_OPTS} DESTDIR="${PWD}/stage" install && tar -czvf "mozjpeg-${REV}-Linux-$(uname -m).tar.gz" -C stage .
 RUN make ${MAKE_OPTS} deb || :
 
 FROM scratch AS final

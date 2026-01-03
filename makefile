@@ -30,6 +30,8 @@
 # Macro
 # =====
 
+.SHELLFLAGS = -efu  -c
+
 VERSION = 1.0.0
 
 BUILD = build
@@ -37,30 +39,24 @@ ARCHS = 386 386-simd amd64 amd64-simd arm/v7 arm/v7-simd arm64/v8 arm64/v8-simd 
 PARCHS != for arch in $(ARCHS); do echo "%/$${arch}"; done
 UPSTREAM = https://github.com/mozilla/mozjpeg.git
 
-DOCKER = eval docker buildx bake --progress plain $${docker_opts-} $(DOCKER_OPTS) | tar -xvC '$(@)'
-FAIL = { \
-	status="$${?}"; \
-	rm -rf -- '$(@)'; \
-	exit "$${status}"; \
-}
-BUILD_CMD = \
-	trap ':' INT; \
-	{ mkdir -p -- '$(@)' && $(DOCKER); } || $(FAIL)
+DOCKER = eval docker buildx bake --progress plain $${opts-} $(DOCKER_OPTS) | tar -xvC '$(@)'
+BUILD_CMD = { mkdir -p -- '$(@)' && $(DOCKER); }
 SIMD = [ '$(@)' != '$(@:-simd=)' ]
-MOZJPEG_V1 = $(MOZJPEG_V2)
-MOZJPEG_V2 = $(MOZJPEG_V3)
-MOZJPEG_V3 = \
-	$(SIMD) && docker_opts="$${docker_opts} --set '*.args.CONFIGURE_OPTS=--with-simd'"; \
+MOZJPEG_V1 = \
+	$(SIMD) && opts="--set '*.args.CONFIGURE_OPTS=--with-simd'"; \
 	$(BUILD_CMD)
+MOZJPEG_V2 = $(MOZJPEG_V1)
+MOZJPEG_V3 = $(MOZJPEG_V2)
 MOZJPEG_V4 = \
-	$(SIMD) && docker_opts="$${docker_opts} --set '*.args.CMAKE_OPTS=-D WITH_SIMD=ON -D REQUIRE_SIMD=ON'"; \
+	$(SIMD) && opts="--set '*.args.CMAKE_OPTS=-D WITH_SIMD=ON -D REQUIRE_SIMD=ON'"; \
 	$(BUILD_CMD)
-MOZJPEG_CURRENT = $(MOZJPEG_V4)
+MOZJPEG_CURR = $(MOZJPEG_V4)
 SIMD_RENAME = if $(SIMD); then find '$(@)' -name '*mozjpeg*' -type f -exec sh -c 'n=mozjpeg; for p in "$${@}"; do d="$${p%/*}"; f=$${p\#\#*/}; mv -- "$${p}" "$${d}/$${f%%$${n}*}$${n}simd$${f\#*$${n}}"; done' sh '{}' +; fi
 SET = \
+	trap '[ "$${?}" -ne 0 ] && rm -rf "$(@)"' EXIT HUP INT QUIT TERM; \
 	set -- '$(@:$(BUILD)/%=%)'; \
-	MOZJPEG_ARCH="$${1\#*/}"; \
-	export MOZJPEG_ARCH="$${MOZJPEG_ARCH%-simd}" MOZJPEG_TAG="$${1%%/*}"
+	ARCH="$${1\#*/}"; \
+	export ARCH="$${ARCH%-simd}" REV="$${1%%/*}"
 TAGS != git tag -l --sort=version:refname 'v[1-9]*'
 
 # Build
@@ -70,10 +66,10 @@ all:
 	make $(TAGS:%=$(BUILD)/%/all)
 
 $(BUILD)/%/all:
-	for target in $(ARCHS:%=$(@D)/%); do make "$${target}" || exit "$${?}"; done
+	for target in $(ARCHS:%=$(@D)/%); do make "$${target}"; done
 
 $(ARCHS:%=$(BUILD)/%):
-	$(SET); $(MOZJPEG_CURRENT)
+	$(SET); $(MOZJPEG_CURR)
 	$(SIMD_RENAME)
 
 $(BUILD)/v1.%/arm64/v8-simd $(BUILD)/v2.%/arm64/v8-simd:
