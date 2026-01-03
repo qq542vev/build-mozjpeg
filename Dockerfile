@@ -11,7 +11,7 @@
 ## Build arg:
 ##
 ##   BASE_IMAGE - ベースとするイメージ名。
-##   VERSION - MozJPEGのバージョン。
+##   REVISION - MozJPEGのバージョン。
 ##
 ## Metadata:
 ##
@@ -19,8 +19,8 @@
 ##   author - <qq542vev at https://purl.org/meta/me/>
 ##   version - 1.0.0
 ##   created - 2025-12-31
-##   modified - 2025-12-31
-##   copyright - Copyright (C) 2025-2025 qq542vev. All rights reserved.
+##   modified - 2026-01-03
+##   copyright - Copyright (C) 2025-2026 qq542vev. All rights reserved.
 ##   license - <GPL-3.0-only at https://www.gnu.org/licenses/gpl-3.0.txt>
 ##
 ## See Also:
@@ -28,7 +28,7 @@
 ##   * <Project homepage at https://github.com/qq542vev/build-mozjpeg>
 ##   * <Bag report at https://github.com/qq542vev/build-mozjpeg/issues>
 
-ARG BASE_IMAGE=gcr.io/distroless/base-nossl-debian12
+ARG BASE_IMAGE="gcr.io/distroless/base-nossl-debian12"
 
 FROM debian:12-slim AS downloader
 
@@ -43,11 +43,11 @@ RUN \
 	for deb in *.deb; do dpkg-deb -x "${deb}" rootfs; done && \
 	rm -rf *.deb /var/lib/apt/lists/* rootfs/usr/share
 
-ARG VERSION=v4.1.5
-ARG TARGETARCH=amd64
+ARG REVISION="v4.1.5"
+ARG TARGETARCH
 ARG TARGETVARIANT
 
-COPY build/${VERSION}/${TARGETARCH}/${TARGETVARIANT}/*.gz build/${VERSION}/${TARGETARCH}/${TARGETVARIANT}/*.bz2 .
+COPY "build/${REVISION}/${TARGETARCH}/${TARGETVARIANT}"/*.gz "build/${REVISION}/${TARGETARCH}/${TARGETVARIANT}/"*.bz2 .
 
 RUN \
 	tar -C rootfs -xavf *mozjpeg* && \
