@@ -121,7 +121,7 @@ unpublish:
 image:
 	for tag in $(TAGS); do \
 		if [ -d "$(BUILD)/$${tag}" ]; then \
-			docker buildx bake -f docker-image.hcl; \
+			REVISION="$${tag}" docker buildx bake -f docker-image.hcl; \
 		fi; \
 	done
 
