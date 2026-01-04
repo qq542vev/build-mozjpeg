@@ -71,6 +71,6 @@ RUN make ${MAKE_OPTS} | tee make.log
 RUN make ${MAKE_OPTS} tarball
 RUN make ${MAKE_OPTS} deb
 
-FROM scratch AS final
+FROM scratch
 COPY --from=build /work/build/mozjpeg*.tar.bz2 /work/build/mozjpeg*.deb /
 COPY --from=build /work/build/cmake.log /work/build/make.log /

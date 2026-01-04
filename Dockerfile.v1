@@ -74,6 +74,6 @@ RUN make ${MAKE_OPTS} 2>&1 | tee make.log
 RUN mkdir stage && make ${MAKE_OPTS} DESTDIR="${PWD}/stage" install && tar -czvf "libmozjpeg-${REV}-Linux-$(uname -m).tar.gz" -C stage .
 RUN make ${MAKE_OPTS} deb || :
 
-FROM scratch AS final
+FROM scratch
 COPY --from=build /work/build/libmozjpeg*.tar.gz /work/build/libmozjpeg*.deb /
 COPY --from=build /work/build/configure.log /work/build/make.log /

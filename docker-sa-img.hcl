@@ -10,6 +10,7 @@
 ##
 ## Env variable:
 ##
+##   DIR - ビルド済みのソフトウェアが配置されているディレクトリ。
 ##   IMAGE_AUTHORS - org.opencontainers.image.authorsの値。
 ##   IMAGE_CREATED - org.opencontainers.image.createdの値。
 ##   IMAGE_DESC - org.opencontainers.image.descの値。
@@ -33,7 +34,8 @@
 ##   * <Project homepage at https://github.com/qq542vev/build-mozjpeg>
 ##   * <Bag report at https://github.com/qq542vev/build-mozjpeg/issues>
 
-variable "REV" {default = "v4.1.5"}
+variable "DIR" {default = "build/v4.1.5"}
+variable "REV" {default = regex("[^/]+$", "${DIR}")}
 variable "IMAGE_AUTHORS" {default = "qq542vev <https://purl.org/meta/me/>"}
 variable "IMAGE_CREATED" {default = timestamp()}
 variable "IMAGE_DESC" {default = "MozJPEG improves JPEG compression efficiency achieving higher visual quality and smaller file sizes at the same time. It is compatible with the JPEG standard, and the vast majority of the world's deployed JPEG decoders."}
@@ -45,7 +47,7 @@ variable "labels" {
     "org.opencontainers.image.created" = IMAGE_CREATED
     "org.opencontainers.image.authors" = IMAGE_AUTHORS
     "org.opencontainers.image.url" = IMAGE_URL
-    "org.opencontainers.image.version" = REVISION
+    "org.opencontainers.image.version" = REV
     "org.opencontainers.image.license" = IMAGE_LICENSE
     "org.opencontainers.image.title" = IMAGE_TITLE
     "org.opencontainers.image.description" = IMAGE_DESC
@@ -56,14 +58,14 @@ target "default" {
   context = "."
   dockerfile = "Dockerfile.standalone"
   platforms = ["linux/amd64", "linux/arm/v7", "linux/ppc64le", "linux/s390x"]
-  args {
-    REV = REV
+  args = {
+    DIR = DIR
   }
   labels = labels
   annotations = formatlist("%s=%s", keys(labels), values(labels))
   tags = [
-    "ghcr.io/qq542vev/mozjpeg:${REVISION}",
-    "registry.gitlab.com/qq542vev/mozjpeg:${REVISION}"
+    "ghcr.io/qq542vev/mozjpeg:${REV}",
+    "registry.gitlab.com/qq542vev/mozjpeg:${REV}"
   ]
   output = ["type=registry"]
 }

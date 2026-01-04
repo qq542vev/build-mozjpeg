@@ -34,27 +34,27 @@
 
 VERSION = 1.0.0
 
-BUILD = build
+DIR = build
 ARCHS = 386 386-simd amd64 amd64-simd arm/v7 arm/v7-simd arm64/v8 arm64/v8-simd ppc64le s390x
 PARCHS != for arch in $(ARCHS); do echo "%/$${arch}"; done
 UPSTREAM = https://github.com/mozilla/mozjpeg.git
 
 DOCKER = eval docker buildx bake --progress plain $${opts-} $(DOCKER_OPTS) | tar -xvC '$(@)'
-BUILD_CMD = { mkdir -p -- '$(@)' && $(DOCKER); }
+DIR_CMD = { mkdir -p -- '$(@)' && $(DOCKER); }
 SIMD = [ '$(@)' != '$(@:-simd=)' ]
 MOZJPEG_V1 = \
 	$(SIMD) && opts="--set '*.args.CONFIGURE_OPTS=--with-simd'"; \
-	$(BUILD_CMD)
+	$(DIR_CMD)
 MOZJPEG_V2 = $(MOZJPEG_V1)
 MOZJPEG_V3 = $(MOZJPEG_V2)
 MOZJPEG_V4 = \
 	$(SIMD) && opts="--set '*.args.CMAKE_OPTS=-D WITH_SIMD=ON -D REQUIRE_SIMD=ON'"; \
-	$(BUILD_CMD)
+	$(DIR_CMD)
 MOZJPEG_CURR = $(MOZJPEG_V4)
 SIMD_RENAME = if $(SIMD); then find '$(@)' -name '*mozjpeg*' -type f -exec sh -c 'n=mozjpeg; for p in "$${@}"; do d="$${p%/*}"; f=$${p\#\#*/}; mv -- "$${p}" "$${d}/$${f%%$${n}*}$${n}simd$${f\#*$${n}}"; done' sh '{}' +; fi
 SET = \
 	trap '[ "$${?}" -ne 0 ] && rm -rf "$(@)"' EXIT HUP INT QUIT TERM; \
-	set -- '$(@:$(BUILD)/%=%)'; \
+	set -- '$(@:$(DIR)/%=%)'; \
 	ARCH="$${1\#*/}"; \
 	export ARCH="$${ARCH%-simd}" REV="$${1%%/*}"
 TAGS != git tag -l --sort=version:refname 'v[1-9]*'
@@ -63,36 +63,36 @@ TAGS != git tag -l --sort=version:refname 'v[1-9]*'
 # =====
 
 all:
-	make $(TAGS:%=$(BUILD)/%/all)
+	make $(TAGS:%=$(DIR)/%/all)
 
-$(BUILD)/%/all:
+$(DIR)/%/all:
 	for target in $(ARCHS:%=$(@D)/%); do make "$${target}"; done
 
-$(ARCHS:%=$(BUILD)/%):
+$(ARCHS:%=$(DIR)/%):
 	$(SET); $(MOZJPEG_CURR)
 	$(SIMD_RENAME)
 
-$(BUILD)/v1.%/arm64/v8-simd $(BUILD)/v2.%/arm64/v8-simd:
+$(DIR)/v1.%/arm64/v8-simd $(DIR)/v2.%/arm64/v8-simd:
 	:
 
-$(PARCHS:%=$(BUILD)/v1.%):
+$(PARCHS:%=$(DIR)/v1.%):
 	$(SET); $(MOZJPEG_V1)
 	$(SIMD_RENAME)
 
-$(PARCHS:%=$(BUILD)/v2.%):
+$(PARCHS:%=$(DIR)/v2.%):
 	$(SET); $(MOZJPEG_V2)
 	$(SIMD_RENAME)
 
-$(PARCHS:%=$(BUILD)/v3.%):
+$(PARCHS:%=$(DIR)/v3.%):
 	$(SET); $(MOZJPEG_V3)
 	$(SIMD_RENAME)
 
-$(PARCHS:%=$(BUILD)/v4.%):
+$(PARCHS:%=$(DIR)/v4.%):
 	$(SET); $(MOZJPEG_V4)
 	$(SIMD_RENAME)
 
 clean:
-	rm -rf -- '$(BUILD)'
+	rm -rf -- '$(DIR)'
 
 rebuild: clean
 	$(MAKE)
@@ -102,8 +102,8 @@ update:
 
 publish:
 	for tag in $(TAGS); do \
-		if [ -d "$(BUILD)/$${tag}" ]; then \
-			find "$(BUILD)/$${tag}" ! -name '*.log' -type f -exec glab release create "$${tag}" --name "$${tag}" --notes "see: <https://github.com/mozilla/mozjpeg/releases/tag/$${tag}>" --no-update --use-package-registry '{}' +; \
+		if [ -d "$(DIR)/$${tag}" ]; then \
+			find "$(DIR)/$${tag}" ! -name '*.log' -type f -exec glab release create "$${tag}" --name "$${tag}" --notes "see: <https://github.com/mozilla/mozjpeg/releases/tag/$${tag}>" --no-update --use-package-registry '{}' +; \
 		fi; \
 	done
 
@@ -116,8 +116,8 @@ unpublish:
 
 image:
 	for tag in $(TAGS); do \
-		if [ -d "$(BUILD)/$${tag}" ]; then \
-			REV="$${tag}" docker buildx bake -f docker-sa-img.hcl; \
+		if [ -d "$(DIR)/$${tag}" ]; then \
+			DIR="$(DIR)/$${tag}" docker buildx bake -f docker-sa-img.hcl; \
 		fi; \
 	done
 
@@ -133,13 +133,6 @@ help:
 	echo 'MACRO:'
 	echo '  DOCKER_OPTS   dockerコマンドへの追加オプション。'
 	echo '  UPSTREAM      リモートリポジトリのアップストリーム用のURL。'
-	echo '  IMAGE_ARCHS   --platformの値。'
-	echo '  IMAGE_AUTHORS org.opencontainers.image.authorsの値。'
-	echo '  IMAGE_DESC    org.opencontainers.image.descriptionの値。'
-	echo '  IMAGE_LICENSE org.opencontainers.image.licenseの値。'
-	echo '  IMAGE_TAG     レジストリのURL。'
-	echo '  IMAGE_TITLE   org.opencontainers.image.titleの値。'
-	echo '  IMAGE_URL     org.opencontainers.image.urlの値。'
 	echo
 	echo 'TARGET:'
 	echo '  all       全てのファイルを作成する。'

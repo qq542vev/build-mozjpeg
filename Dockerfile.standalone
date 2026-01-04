@@ -10,8 +10,8 @@
 ##
 ## Build arg:
 ##
-##   BASE_IMAGE - ベースとするイメージ名。
-##   REV - Gitリポジトリのリビジョン識別子。
+##   BASE - ベースとするイメージ名。
+##   DIR - ビルド済みのソフトウェアが配置されているディレクトリ。
 ##
 ## Metadata:
 ##
@@ -28,7 +28,7 @@
 ##   * <Project homepage at https://github.com/qq542vev/build-mozjpeg>
 ##   * <Bag report at https://github.com/qq542vev/build-mozjpeg/issues>
 
-ARG BASE_IMAGE="gcr.io/distroless/base-nossl-debian12"
+ARG BASE="gcr.io/distroless/base-nossl-debian12"
 
 FROM debian:12-slim AS downloader
 
@@ -43,11 +43,11 @@ RUN \
 	for deb in *.deb; do dpkg-deb -x "${deb}" rootfs; done && \
 	rm -rf *.deb /var/lib/apt/lists/* rootfs/usr/share
 
-ARG REV="v4.1.5"
+ARG DIR="build/v4.1.5"
 ARG TARGETARCH
 ARG TARGETVARIANT
 
-COPY "build/${REV}/${TARGETARCH}/${TARGETVARIANT}"/*.gz "build/${REV}/${TARGETARCH}/${TARGETVARIANT}/"*.bz2 .
+COPY "${DIR}/${TARGETARCH}/${TARGETVARIANT}"/*.gz "${DIR}/${TARGETARCH}/${TARGETVARIANT}/"*.bz2 .
 
 RUN \
 	tar -C rootfs -xavf *mozjpeg* && \
@@ -58,11 +58,11 @@ RUN \
 		'(' -name '*.a' -o -name '*.la' ')' -type f \
 		-exec rm -rf '{}' +
 
-FROM "${BASE_IMAGE}"
+FROM "${BASE}"
 
-ARG BASE_IMAGE=gcr.io/distroless/base-nossl-debian12
+ARG BASE=gcr.io/distroless/base-nossl-debian12
 
-LABEL org.opencontainers.image.base.name="${BASE_IMAGE}"
+LABEL org.opencontainers.image.base.name="${BASE}"
 
 ENV PATH="/opt/mozjpeg/bin:/opt/libmozjpeg/bin"
 ENV LD_LIBRARY_PATH="/opt/mozjpeg/lib32:/opt/mozjpeg/lib64:/opt/libmozjpeg/lib32:/opt/libmozjpeg/lib64"

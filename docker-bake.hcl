@@ -32,7 +32,7 @@
 variable "REV" {default = "v4.1.5"}
 variable "ARCH" {default = "386"}
 variable "DOCKERFILE" {
-  default = try("Dockerfile.${regex("^v[1-4]", "${REV}")}", "Dockerfile")
+  default = try("Dockerfile.${regex("^v[1-9][0-9]*", "${REV}")}", "Dockerfile")
 }
 
 target "default" {
