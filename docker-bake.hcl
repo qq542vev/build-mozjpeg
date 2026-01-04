@@ -38,7 +38,7 @@ variable "DOCKERFILE" {
 target "default" {
   context = "."
   dockerfile = "${DOCKERFILE}"
-  platforms = ["linux/${AECH}"]
+  platforms = ["linux/${ARCH}"]
   args = {
     REV = REV
   }
