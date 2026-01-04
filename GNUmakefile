@@ -8,9 +8,9 @@
 ##
 ##   id - 12d86b83-9061-4112-8010-eab2952c051d
 ##   author - <qq542vev at https://purl.org/meta/me/>
-##   version - 1.2.0
+##   version - 1.2.1
 ##   created - 2025-11-15
-##   modified - 2026-01-03
+##   modified - 2026-01-05
 ##   copyright - Copyright (C) 2025-2026 qq542vev. All rights reserved.
 ##   license - <GPL-3.0-only at https://www.gnu.org/licenses/gpl-3.0.txt>
 ##   depends - docker, find, git, mv, sed
@@ -117,7 +117,7 @@ unpublish:
 image:
 	for tag in $(TAGS); do \
 		if [ -d "$(BUILD)/$${tag}" ]; then \
-			REVISION="$${tag}" docker buildx bake -f docker-image.hcl; \
+			REV="$${tag}" docker buildx bake -f docker-sa-img.hcl; \
 		fi; \
 	done
 
