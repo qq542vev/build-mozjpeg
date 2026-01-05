@@ -11,12 +11,12 @@
 ## Env variable:
 ##
 ##   DIR - ビルド済みのソフトウェアが配置されているディレクトリ。
-##   IMAGE_AUTHORS - org.opencontainers.image.authorsの値。
-##   IMAGE_CREATED - org.opencontainers.image.createdの値。
-##   IMAGE_DESC - org.opencontainers.image.descの値。
-##   IMAGE_LICENSE- org.opencontainers.image.licenseの値。
-##   IMAGE_TITLE - org.opencontainers.image.titleの値。
-##   IMAGE_URL - org.opencontainers.image.urlの値。
+##   IMG_AUTHS - org.opencontainers.image.authorsの値。
+##   IMG_CREATED - org.opencontainers.image.createdの値。
+##   IMG_DESC - org.opencontainers.image.descの値。
+##   IMG_LICENSE- org.opencontainers.image.licenseの値。
+##   IMG_TITLE - org.opencontainers.image.titleの値。
+##   IMG_URL - org.opencontainers.image.urlの値。
 ##   REV - Gitリポジトリのリビジョン識別子。
 ##
 ## Metadata:
@@ -36,21 +36,21 @@
 
 variable "DIR" {default = "build/v4.1.5"}
 variable "REV" {default = regex("[^/]+$", "${DIR}")}
-variable "IMAGE_AUTHORS" {default = "qq542vev <https://purl.org/meta/me/>"}
-variable "IMAGE_CREATED" {default = timestamp()}
-variable "IMAGE_DESC" {default = "MozJPEG improves JPEG compression efficiency achieving higher visual quality and smaller file sizes at the same time. It is compatible with the JPEG standard, and the vast majority of the world's deployed JPEG decoders."}
-variable "IMAGE_LICENSE" {default = "IJG AND BSD-3-Clause AND Zlib"}
-variable "IMAGE_TITLE" {default = "MozJPEG"}
-variable "IMAGE_URL" {default = "https://gitlab.com/qq542vev/build-mozjpeg"}
+variable "IMG_AUTHS" {default = "qq542vev <https://purl.org/meta/me/>"}
+variable "IMG_CREATED" {default = timestamp()}
+variable "IMG_DESC" {default = "MozJPEG improves JPEG compression efficiency achieving higher visual quality and smaller file sizes at the same time. It is compatible with the JPEG standard, and the vast majority of the world's deployed JPEG decoders."}
+variable "IMG_LICENSE" {default = "IJG AND BSD-3-Clause AND Zlib"}
+variable "IMG_TITLE" {default = "MozJPEG"}
+variable "IMG_URL" {default = "https://gitlab.com/qq542vev/build-mozjpeg"}
 variable "labels" {
   default = {
-    "org.opencontainers.image.created" = IMAGE_CREATED
-    "org.opencontainers.image.authors" = IMAGE_AUTHORS
-    "org.opencontainers.image.url" = IMAGE_URL
+    "org.opencontainers.image.created" = IMG_CREATED
+    "org.opencontainers.image.authors" = IMG_AUTHS
+    "org.opencontainers.image.url" = IMG_URL
     "org.opencontainers.image.version" = REV
-    "org.opencontainers.image.license" = IMAGE_LICENSE
-    "org.opencontainers.image.title" = IMAGE_TITLE
-    "org.opencontainers.image.description" = IMAGE_DESC
+    "org.opencontainers.image.license" = IMG_LICENSE
+    "org.opencontainers.image.title" = IMG_TITLE
+    "org.opencontainers.image.description" = IMG_DESC
   }
 }
 
