@@ -64,8 +64,8 @@ target "default" {
   labels = labels
   annotations = formatlist("%s=%s", keys(labels), values(labels))
   tags = [
-    "ghcr.io/qq542vev/mozjpeg:${REV}",
-    "registry.gitlab.com/qq542vev/mozjpeg:${REV}"
+    "ghcr.io/qq542vev/build-mozjpeg:${REV}",
+    "registry.gitlab.com/qq542vev/build-mozjpeg:${REV}"
   ]
   output = ["type=registry"]
 }
