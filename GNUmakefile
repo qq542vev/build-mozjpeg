@@ -35,7 +35,7 @@
 VERSION = 1.0.0
 
 DIR = build
-ARCHS = 386 386-simd amd64 amd64-simd arm/v7 arm/v7-simd arm64/v8 arm64/v8-simd ppc64le s390x
+ARCHS = 386 386-simd amd64 amd64-simd arm/v7 arm/v7-simd arm64 arm64-simd ppc64le s390x
 PARCHS != for arch in $(ARCHS); do echo "%/$${arch}"; done
 UPSTREAM = https://github.com/mozilla/mozjpeg.git
 

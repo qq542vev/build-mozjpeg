@@ -57,7 +57,7 @@ variable "labels" {
 target "default" {
   context = "."
   dockerfile = "Dockerfile.standalone"
-  platforms = ["linux/amd64", "linux/arm/v7", "linux/ppc64le", "linux/s390x"]
+  platforms = ["linux/amd64", "linux/arm/v7", "linux/arm64", "linux/ppc64le", "linux/s390x"]
   args = {
     DIR = DIR
   }
