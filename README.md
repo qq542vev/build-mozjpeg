@@ -21,7 +21,7 @@ See Also:
 
 # Build MozJPEG
 
-このプロジェクトは、複数アーキテクチャのLinux向けにビルドした[MozJPEG]()のプリビルトパッケージ（tar / deb）および Docker / OCI イメージを配布します。ダウンロード・Pull は下記の配布先をご利用ください。
+Build MozJPEGは、Linux環境を前提として複数アーキテクチャ向けにビルドした[MozJPEG]()のプリビルトパッケージ（tar / deb）および Docker / OCI イメージを配布します。ダウンロード・Pull は下記の配布先をご利用ください。
 
  * [Releases（パッケージ・アーティファクト）](https://gitlab.com/qq542vev/build-mozjpeg/-/releases)
 - [Container Registry（Docker / OCI イメージ）](https://gitlab.com/qq542vev/build-mozjpeg/container_registry/9609771)
@@ -30,14 +30,14 @@ See Also:
 
 | バリアント   | パッケージ | Docker |
 |--------------|------------|--------|
-| 386          | ✓          | ×      |
-| 386(SIMD)    | ✓          | ×      |
+| 386          | ✓          | ✗      |
+| 386(SIMD)    | ✓          | ✗      |
 | amd64        | ✓          | ✓      |
-| amd64(SMID)  | ✓          | ×      |
+| amd64(SMID)  | ✓          | ✗      |
 | arm/v7       | ✓          | ✓      |
-| arm/v7(SIMD) | ✓          | ×      |
+| arm/v7(SIMD) | ✓          | ✗      |
 | arm64        | ✓          | ✓      |
-| arm64(SIMD)  | ✓          | ×      |
+| arm64(SIMD)  | ✓          | ✗      |
 | ppc64le      | ✓          | ✓      |
 | s390x        | ✓          | ✓      |
 
