@@ -64,10 +64,10 @@ FROM "${BASE}"
 ARG BASE=gcr.io/distroless/base-nossl-debian12
 LABEL org.opencontainers.image.base.name="${BASE}"
 
-ARG WORKDIR="/work"
-WORKDIR "${WORKDIR}"
-
 ENV PATH="/opt/mozjpeg/bin:/opt/libmozjpeg/bin"
 ENV LD_LIBRARY_PATH="/opt/mozjpeg/lib32:/opt/mozjpeg/lib64:/opt/libmozjpeg/lib32:/opt/libmozjpeg/lib64"
+
+ARG WORKDIR="/work"
+WORKDIR "${WORKDIR}"
 
 COPY --from=downloader /work/rootfs /
