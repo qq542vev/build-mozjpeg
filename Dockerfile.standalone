@@ -23,6 +23,7 @@
 ##   modified - 2026-01-06
 ##   copyright - Copyright (C) 2025-2026 qq542vev. All rights reserved.
 ##   license - <GPL-3.0-only at https://www.gnu.org/licenses/gpl-3.0.txt>
+##   conforms-to - <https://docs.docker.com/reference/dockerfile/>
 ##
 ## See Also:
 ##

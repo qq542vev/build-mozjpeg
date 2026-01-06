@@ -28,6 +28,7 @@
 ##   modified - 2026-01-04
 ##   copyright - Copyright (C) 2026-2026 qq542vev. All rights reserved.
 ##   license - <GPL-3.0-only at https://www.gnu.org/licenses/gpl-3.0.txt>
+##   conforms-to - <https://docs.docker.com/build/bake/reference/>
 ##
 ## See Also:
 ##
