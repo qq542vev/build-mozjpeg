@@ -8,7 +8,7 @@ Metadata:
 	author - <qq542vev at https://purl.org/meta/me/>
 	version - 0.1.0
 	created - 2026-01-06
-	modified - 2026-01-06
+	modified - 2026-01-07
 	copyright - Copyright (C) 2026-2026 qq542vev. Some rights reserved.
 	license - <GPL-3.0-only at https://www.gnu.org/licenses/gpl-3.0.txt>
 	conforms-to - <https://spec.commonmark.org/current/>
@@ -61,4 +61,4 @@ docker run --rm -v "$(pwd):/work" registry.gitlab.com/qq542vev/build-mozjpeg:v4.
 
 ## ライセンス
 
-Build MozJPEGに於いて作成したファイルは<LICENSE.txt>に従います。MozJPEG自体のライセンスは[libjpeg-turbo Licenses](https://gitlab.com/qq542vev/build-mozjpeg/-/blob/master/LICENSE.md)に従います。バージョン毎のライセンス詳細は各リリースに含まれるLICENSEファイルを参照してください。
+Build MozJPEGに於いて作成したファイルは[LICENSE.txt](https://gitlab.com/qq542vev/build-mozjpeg/-/blob/docker-build/LICENSE.txt)の記載に従います。MozJPEG自体のライセンスは[LICENSE.md](https://gitlab.com/qq542vev/build-mozjpeg/-/blob/master/LICENSE.md)の記載に従います。バージョン毎のライセンス詳細は各リリースに含まれるLICENSEファイルを参照してください。
