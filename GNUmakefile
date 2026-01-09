@@ -8,12 +8,12 @@
 ##
 ##   id - 12d86b83-9061-4112-8010-eab2952c051d
 ##   author - <qq542vev at https://purl.org/meta/me/>
-##   version - 1.2.1
+##   version - 1.2.2
 ##   created - 2025-11-15
-##   modified - 2026-01-05
+##   modified - 2026-01-09
 ##   copyright - Copyright (C) 2025-2026 qq542vev. All rights reserved.
 ##   license - <GPL-3.0-only at https://www.gnu.org/licenses/gpl-3.0.txt>
-##   depends - docker, find, git, mv, sed
+##   depends - docker, find, git, glab, mkdir, mv, rm, tar, test
 ##
 ## See Also:
 ##
@@ -30,7 +30,7 @@
 # Macro
 # =====
 
-.SHELLFLAGS = -efu  -c
+.SHELLFLAGS = -efuo pipefail -c
 
 VERSION = 1.0.0
 
@@ -40,16 +40,16 @@ PARCHS != for arch in $(ARCHS); do echo "%/$${arch}"; done
 UPSTREAM = https://github.com/mozilla/mozjpeg.git
 
 DOCKER = eval docker buildx bake --progress plain $${opts-} $(DOCKER_OPTS) | tar -xvC '$(@)'
-DIR_CMD = { mkdir -p -- '$(@)' && $(DOCKER); }
+CMD = { mkdir -p -- '$(@)' && $(DOCKER); }
 SIMD = [ '$(@)' != '$(@:-simd=)' ]
 MOZJPEG_V1 = \
 	$(SIMD) && opts="--set '*.args.CONFIGURE_OPTS=--with-simd'"; \
-	$(DIR_CMD)
+	$(CMD)
 MOZJPEG_V2 = $(MOZJPEG_V1)
 MOZJPEG_V3 = $(MOZJPEG_V2)
 MOZJPEG_V4 = \
 	$(SIMD) && opts="--set '*.args.CMAKE_OPTS=-D WITH_SIMD=ON -D REQUIRE_SIMD=ON'"; \
-	$(DIR_CMD)
+	$(CMD)
 MOZJPEG_CURR = $(MOZJPEG_V4)
 SIMD_RENAME = if $(SIMD); then find '$(@)' -name '*mozjpeg*' -type f -exec sh -c 'n=mozjpeg; for p in "$${@}"; do d="$${p%/*}"; f=$${p\#\#*/}; mv -- "$${p}" "$${d}/$${f%%$${n}*}$${n}simd$${f\#*$${n}}"; done' sh '{}' +; fi
 SET = \
@@ -63,10 +63,10 @@ TAGS != git tag -l --sort=version:refname 'v[1-9]*'
 # =====
 
 all:
-	make $(TAGS:%=$(DIR)/%/all)
+	$(MAKE) $(TAGS:%=$(DIR)/%/all)
 
 $(DIR)/%/all:
-	for target in $(ARCHS:%=$(@D)/%); do make "$${target}"; done
+	for target in $(ARCHS:%=$(@D)/%); do $(MAKE) "$${target}"; done
 
 $(ARCHS:%=$(DIR)/%):
 	$(SET); $(MOZJPEG_CURR)
