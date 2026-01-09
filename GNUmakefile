@@ -32,7 +32,7 @@
 
 .SHELLFLAGS = -efuo pipefail -c
 
-VERSION = 1.0.0
+VERSION = 1.2.2
 
 DIR = build
 ARCHS = 386 386-simd amd64 amd64-simd arm/v7 arm/v7-simd arm64 arm64-simd ppc64le s390x
