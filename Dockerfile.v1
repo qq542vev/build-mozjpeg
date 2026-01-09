@@ -5,7 +5,7 @@
 ## Usage:
 ##
 ## ------ Text ------
-## docker buildx build -f Dockerfile.v2
+## docker buildx build -f Dockerfile.v1
 ## ------------------
 ##
 ## Build arg:
@@ -26,7 +26,7 @@
 ##   author - <qq542vev at https://purl.org/meta/me/>
 ##   version - 1.0.2
 ##   created - 2025-11-18
-##   modified - 2026-01-03
+##   modified - 2026-01-09
 ##   copyright - Copyright (C) 2025-2025 qq542vev. All rights reserved.
 ##   license - <GPL-3.0-only at https://www.gnu.org/licenses/gpl-3.0.txt>
 ##   conforms-to - <https://docs.docker.com/reference/dockerfile/>
@@ -61,7 +61,7 @@ RUN --mount=type=secret,id=attach \
 WORKDIR /work/build
 COPY .git ..
 
-ARG REV=v2.1
+ARG REV=v1.0.1
 RUN git archive --format=tar "${REV}" | tar -xvC ..
 
 ARG AUTORECONF_OPTS=
