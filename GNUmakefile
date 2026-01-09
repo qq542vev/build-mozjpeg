@@ -8,7 +8,7 @@
 ##
 ##   id - 12d86b83-9061-4112-8010-eab2952c051d
 ##   author - <qq542vev at https://purl.org/meta/me/>
-##   version - 1.2.2
+##   version - 1.2.3
 ##   created - 2025-11-15
 ##   modified - 2026-01-09
 ##   copyright - Copyright (C) 2025-2026 qq542vev. All rights reserved.
@@ -32,7 +32,7 @@
 
 .SHELLFLAGS = -efuo pipefail -c
 
-VERSION = 1.2.2
+VERSION = 1.2.3
 
 DIR = build
 ARCHS = 386 386-simd amd64 amd64-simd arm/v7 arm/v7-simd arm64 arm64-simd ppc64le s390x
@@ -72,7 +72,7 @@ $(ARCHS:%=$(DIR)/%):
 	$(SET); $(MOZJPEG_CURR)
 	$(SIMD_RENAME)
 
-$(DIR)/v1.%/arm64/v8-simd $(DIR)/v2.%/arm64/v8-simd:
+$(DIR)/v1.%/arm64-simd $(DIR)/v2.%/arm64-simd:
 	:
 
 $(PARCHS:%=$(DIR)/v1.%):
