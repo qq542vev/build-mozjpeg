@@ -1,6 +1,6 @@
 #!/usr/bin/gmake -f
 
-### Script: makefile
+### Script: GUNmakefile
 ##
 ## ファイルを作成する。
 ##
