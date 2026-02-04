@@ -21,7 +21,7 @@ See Also:
 
 # Build MozJPEG
 
-Build MozJPEGは、Linux環境を前提として複数アーキテクチャ向けにビルドした[MozJPEG](https://github.com/mozilla/mozjpeg)のプリビルトパッケージ（tar / deb）および Docker / OCI イメージを配布します。ダウンロード・Pull は下記の配布先をご利用ください。
+Build MozJPEGは、Linux環境を前提として複数アーキテクチャ向けにビルドした[MozJPEG](https://github.com/mozilla/mozjpeg)のプリビルトパッケージ（tar / deb）およびDocker / OCIイメージを配布します。ダウンロード・Pullは下記の配布先をご利用ください。
 
  * [Releases（パッケージ・アーティファクト）](https://gitlab.com/qq542vev/build-mozjpeg/-/releases)
 - [Container Registry（Docker / OCI イメージ）](https://gitlab.com/qq542vev/build-mozjpeg/container_registry/9609771)
