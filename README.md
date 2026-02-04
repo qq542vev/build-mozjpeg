@@ -21,10 +21,10 @@ See Also:
 
 # Build MozJPEG
 
-Build MozJPEGは、Linux環境を前提として複数アーキテクチャ向けにビルドした[MozJPEG](https://github.com/mozilla/mozjpeg)のプリビルトパッケージ（tar / deb）およびDocker / OCIイメージを配布します。ダウンロード・Pullは下記の配布先をご利用ください。
+Build MozJPEGは、Linux環境を前提として複数アーキテクチャ向けにビルドした[MozJPEG](https://github.com/mozilla/mozjpeg)のプリビルトパッケージ（tar / deb）およびDocker / OCIイメージを配布するプロジェクトです。ダウンロード・Pullは下記の配布先をご利用ください。
 
  * [Releases（パッケージ・アーティファクト）](https://gitlab.com/qq542vev/build-mozjpeg/-/releases)
-- [Container Registry（Docker / OCI イメージ）](https://gitlab.com/qq542vev/build-mozjpeg/container_registry/9609771)
+- [Container Registry（Docker / OCIイメージ）](https://gitlab.com/qq542vev/build-mozjpeg/container_registry/9609771)
 
 ## サポートされているビルドバリアント
 
@@ -61,4 +61,4 @@ docker run --rm -v "$(pwd):/work" registry.gitlab.com/qq542vev/build-mozjpeg:v4.
 
 ## ライセンス
 
-Build MozJPEGに於いて作成したファイルは[LICENSE.txt](https://gitlab.com/qq542vev/build-mozjpeg/-/blob/docker-build/LICENSE.txt)の記載に従います。MozJPEG自体のライセンスは[LICENSE.md](https://gitlab.com/qq542vev/build-mozjpeg/-/blob/master/LICENSE.md)の記載に従います。バージョン毎のライセンス詳細は各リリースに含まれるLICENSEファイルを参照してください。
+Build MozJPEGに於いて作成したファイルは[LICENSE.txt](LICENSE.txt)の記載に従います。MozJPEG自体のライセンスは[LICENSE.md](https://gitlab.com/qq542vev/build-mozjpeg/-/blob/master/LICENSE.md)の記載に従います。バージョン毎のライセンス詳細は各リリースに含まれるLICENSEファイルを参照してください。
