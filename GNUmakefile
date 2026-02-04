@@ -131,8 +131,8 @@ help:
 	echo '  make [OPTION...] [MACRO=VALUE...] [TARGET...]'
 	echo
 	echo 'MACRO:'
-	echo '  DOCKER_OPTS   dockerコマンドへの追加オプション。'
-	echo '  UPSTREAM      リモートリポジトリのアップストリーム用のURL。'
+	echo '  DOCKER_OPTS dockerコマンドへの追加オプション。'
+	echo '  UPSTREAM    リモートリポジトリのアップストリーム用のURL。'
 	echo
 	echo 'TARGET:'
 	echo '  all       全てのファイルを作成する。'

@@ -6,9 +6,9 @@ Metadata:
 
 	id - 4d1ec30c-138b-46df-816a-d3051c2f0b2b
 	author - <qq542vev at https://purl.org/meta/me/>
-	version - 0.1.0
+	version - 0.1.1
 	created - 2026-01-06
-	modified - 2026-01-07
+	modified - 2026-02-04
 	copyright - Copyright (C) 2026-2026 qq542vev. Some rights reserved.
 	license - <GPL-3.0-only at https://www.gnu.org/licenses/gpl-3.0.txt>
 	conforms-to - <https://spec.commonmark.org/current/>
@@ -21,7 +21,7 @@ See Also:
 
 # Build MozJPEG
 
-Build MozJPEGは、Linux環境を前提として複数アーキテクチャ向けにビルドした[MozJPEG]()のプリビルトパッケージ（tar / deb）および Docker / OCI イメージを配布します。ダウンロード・Pull は下記の配布先をご利用ください。
+Build MozJPEGは、Linux環境を前提として複数アーキテクチャ向けにビルドした[MozJPEG](https://github.com/mozilla/mozjpeg)のプリビルトパッケージ（tar / deb）および Docker / OCI イメージを配布します。ダウンロード・Pull は下記の配布先をご利用ください。
 
  * [Releases（パッケージ・アーティファクト）](https://gitlab.com/qq542vev/build-mozjpeg/-/releases)
 - [Container Registry（Docker / OCI イメージ）](https://gitlab.com/qq542vev/build-mozjpeg/container_registry/9609771)
